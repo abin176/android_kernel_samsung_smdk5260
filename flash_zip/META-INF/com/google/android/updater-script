@@ -1,0 +1,31 @@
+ui_print("Mod     : FireKernel");
+ui_print("Version : v1");
+ui_print("Device  : Galaxy Note 3 Neo");
+assert(getprop("ro.product.device") == "hl3g" ||
+       getprop("ro.product.device") == "hl3gxx" ||
+       getprop("ro.product.device") == "hllte" ||
+       getprop("ro.product.device") == "hlltexx" ||
+       abort("This package is for device: hl3g,hl3gxx,hllte,hlltexx; this device is " +
+             getprop("ro.product.device") + "."););
+
+ui_print("Status  : Extracting flashing tools");
+package_extract_dir("tools", "/tmp");
+set_perm(0, 0, 0777, "/tmp/mkbootimg");
+set_perm(0, 0, 0777, "/tmp/unpackbootimg");
+set_perm(0, 0, 0777, "/tmp/flash_kernel.sh");
+set_progress(0.2);
+
+ui_print("Status  : Building and installing boot image");
+run_program("/tmp/flash_kernel.sh");
+set_progress(0.6);
+
+ui_print("Status  : Cleaning up flashing tools");
+delete("/tmp/boot.img");
+delete("/tmp/mkbootimg");
+delete("/tmp/unpackbootimg");
+delete("/tmp/flash_kernel.sh");
+set_progress(0.8);
+
+ui_print("Status  : Kernel installation completed");
+ui_print("Message : Reboot Mobile");
+set_progress(1.0);
