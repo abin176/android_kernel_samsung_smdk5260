@@ -30,7 +30,7 @@ red='\033[0;31m'
 nocol='\033[0m'
 export ARCH=arm
 export SUBARCH=arm
-export CROSS_COMPILE=~/android/kernel/toolchain/uber-4.8/bin/arm-eabi-
+export CROSS_COMPILE=~/android/kernel/toolchain/google-4.8/bin/arm-eabi-
 export KBUILD_BUILD_USER="haha"
 export KBUILD_BUILD_HOST="FireLord"
 rm -f flash_zip/boot.img
