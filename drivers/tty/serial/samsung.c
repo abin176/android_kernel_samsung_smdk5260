@@ -1043,12 +1043,16 @@ static void s3c24xx_serial_pm(struct uart_port *port, unsigned int level,
 			      unsigned int old)
 {
 	struct s3c24xx_uart_port *ourport = to_ourport(port);
-
-	ourport->pm_level = level;
+	unsigned int umcon;
 
 	switch (level) {
 	case 3:
-		if (!IS_ERR(ourport->baudclk) && ourport->baudclk != NULL)
+		/* disable auto flow control & set nRTS for High */
+		umcon = rd_regl(port, S3C2410_UMCON);
+		umcon &= ~(S3C2410_UMCOM_AFC | S3C2410_UMCOM_RTS_LOW);
+		wr_regl(port, S3C2410_UMCON, umcon);
+
+		if (!IS_ERR(ourport->baudclk))
 			clk_disable(ourport->baudclk);
 
 		clk_disable(ourport->clk);
@@ -1587,7 +1591,7 @@ static int s3c24xx_serial_init_port(struct s3c24xx_uart_port *ourport,
 		ourport->rx_irq = ret;
 		ourport->tx_irq = ret + 1;
 	}
-	
+
 	ret = platform_get_irq(platdev, 1);
 	if (ret > 0)
 		ourport->tx_irq = ret;
@@ -1740,7 +1744,7 @@ static int s3c24xx_serial_probe(struct platform_device *pdev)
 	ret = s3c24xx_serial_init_port(ourport, pdev);
 	if (ret < 0)
 		goto probe_err;
- 
+
 	/* Registering notifier for audio uart */
 	if (ourport->cfg->is_aud_uart) {
 		ourport->aud_uart_notifier.notifier_call = exynos_aud_uart_notifier;

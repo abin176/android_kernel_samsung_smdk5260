@@ -713,7 +713,7 @@ start_journal_io:
 	commit_transaction->t_state = T_COMMIT_DFLUSH;
 	write_unlock(&journal->j_state_lock);
 
-	/* 
+	/*
 	 * If the journal is not located on the file system device,
 	 * then we must flush the file system device before we issue
 	 * the commit record
@@ -1050,7 +1050,7 @@ restart_loop:
 	}
 	spin_unlock(&journal->j_list_lock);
 
-	if (journal->j_commit_callback)
+	if (journal->j_commit_callback) {
 		journal->j_commit_callback(journal, commit_transaction);
 		spin_lock(&journal->j_list_lock);
 		if (commit_transaction->t_dropped) {
