@@ -851,6 +851,13 @@ int ping_recvmsg(struct kiocb *iocb, struct sock *sk, struct msghdr *msg,
 	if (flags & MSG_OOB)
 		goto out;
 
+	if (addr_len) {
+		if (family == AF_INET)
+			*addr_len = sizeof(*sin);
+		else if (family == AF_INET6 && addr_len)
+			*addr_len = sizeof(*sin6);
+	}
+
 	if (flags & MSG_ERRQUEUE) {
 		if (family == AF_INET) {
 			return ip_recv_error(sk, msg, len);
@@ -860,8 +867,6 @@ int ping_recvmsg(struct kiocb *iocb, struct sock *sk, struct msghdr *msg,
 #endif
 		}
 	}
-	if (flags & MSG_ERRQUEUE)
-		return ip_recv_error(sk, msg, len);
 
 	skb = skb_recv_datagram(sk, flags, noblock, &err);
 	if (!skb)
