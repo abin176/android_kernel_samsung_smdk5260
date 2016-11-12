@@ -1342,7 +1342,7 @@ struct sk_buff *__ip_make_skb(struct sock *sk,
 	else
 		ttl = ip_select_ttl(inet, &rt->dst);
 
-	iph = ip_hdr(skb);
+	iph = (struct iphdr *)skb->data;
 	iph->version = 4;
 	iph->ihl = 5;
 	iph->tos = inet->tos;
