@@ -860,6 +860,8 @@ int ping_recvmsg(struct kiocb *iocb, struct sock *sk, struct msghdr *msg,
 #endif
 		}
 	}
+	if (flags & MSG_ERRQUEUE)
+		return ip_recv_error(sk, msg, len);
 
 	skb = skb_recv_datagram(sk, flags, noblock, &err);
 	if (!skb)
@@ -881,7 +883,7 @@ int ping_recvmsg(struct kiocb *iocb, struct sock *sk, struct msghdr *msg,
 	/* Copy the address and add cmsg data. */
 	if (family == AF_INET) {
 		sin = (struct sockaddr_in *) msg->msg_name;
-		
+
 		if (sin)
 		{
 			sin->sin_family = AF_INET;
@@ -897,9 +899,9 @@ int ping_recvmsg(struct kiocb *iocb, struct sock *sk, struct msghdr *msg,
 	} else if (family == AF_INET6) {
 		struct ipv6_pinfo *np = inet6_sk(sk);
 		struct ipv6hdr *ip6 = ipv6_hdr(skb);
-		
+
 		sin6 = (struct sockaddr_in6 *) msg->msg_name;
-		
+
 		if (sin6)
 		{
 			sin6->sin6_family = AF_INET6;
@@ -1185,4 +1187,3 @@ void __init ping_init(void)
 		INIT_HLIST_NULLS_HEAD(&ping_table.hash[i], i);
 	rwlock_init(&ping_table.lock);
 }
-
