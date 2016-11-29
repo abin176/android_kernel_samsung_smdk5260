@@ -1898,9 +1898,6 @@ __acquires(&gcwq->lock)
 	lock_map_acquire_read(&cwq->wq->lockdep_map);
 	lock_map_acquire(&lockdep_map);
 	trace_workqueue_execute_start(work);
-	sec_debug_work_log(worker, work, trace_workqueue_execute_start, 1);
-	trace_workqueue_execute_start(work);
-	sec_debug_work_log(worker, work, trace_workqueue_execute_start, 2);
 	worker->current_func(work);
 	/*
 	 * While we must be careful to not use "work" after this, the trace
